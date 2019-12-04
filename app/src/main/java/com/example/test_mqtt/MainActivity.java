@@ -19,22 +19,23 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import java.util.concurrent.TimeUnit;
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    MqttAndroidClient client;
-    String clientid = "hello11";
-    public MqttAndroidClient mqttAndroidClient;
-    final String serverUri = "tcp://test.mosquitto.org:1883";
-    TextView txv_value;
-    Button btn_color;
+    private MqttAndroidClient mqttAndroidClient;
+    private MqttAndroidClient client;
+    private static final String SERVER_URI = "tcp://test.mosquitto.org:1883";
+    private TextView txv_rgb;
+    private TextView txv_light;
+    private TextView txv_proximity;
+    private Button btn_color;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        txv_value = (TextView) findViewById(R.id.txv_sensorValue);
+        txv_rgb = (TextView) findViewById(R.id.txv_rgbValue);
+        txv_light = (TextView) findViewById(R.id.txv_lightValue);
+        txv_proximity = (TextView) findViewById(R.id.txv_proximityValue);
         btn_color = (Button) findViewById(R.id.btnColor);
 
         connect();
@@ -46,10 +47,11 @@ public class MainActivity extends AppCompatActivity {
                 if (reconnect) {
                     System.out.println("Reconnected to : " + serverURI);
                     // Re-subscribe as we lost it due to new session
-                     subscribe();
+                     subscribe("hellocutie0");
                 } else {
                     System.out.println("Connected to: " + serverURI);
-                    subscribe();
+                    subscribe("hellocutie0");
+                    subscribe("hellocutie1");
                 }
             }
 
@@ -60,14 +62,34 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                String newMessage = new String(message.getPayload());
-                System.out.println("Incoming message: " + message);
-                txv_value.setText(newMessage);
+                if (topic.equals("hellocutie0")) {
+                    String newMessage = new String(message.getPayload());
+                    System.out.println("Incoming message: " + newMessage);
+
+                    txv_proximity.setText(newMessage);
+                    if (Integer.parseInt(newMessage) > 10000) {
+                        btn_color.setBackgroundColor(Color.RED);
+                    } else {
+                        btn_color.setBackgroundColor(Color.GREEN);
+                    }
+                } else if (topic.equals("hellocutie1")) {
+                    String newMessage = new String(message.getPayload());
+                    System.out.println("Incoming message: " + newMessage);
+                    txv_light.setText(newMessage);
+                    /* Do something */
+                }
+
+
+                /*
+                txv_rgb.setText(newMessage);
                 String[] colorValues = newMessage.split(",");
-                int redValue = Integer.parseInt(colorValues[0]);
-                int blueValue = Integer.parseInt(colorValues[1]);
-                int greenValue = Integer.parseInt(colorValues[2]);
+                int redValue = (Integer.parseInt(colorValues[0]) * 2);
+                int blueValue = (Integer.parseInt(colorValues[1]) * 5);
+                int greenValue = (Integer.parseInt(colorValues[2]) * 3);
                 btn_color.setBackgroundColor(Color.rgb(redValue, blueValue, greenValue));
+                */
+
+
             }
 
             @Override
@@ -76,16 +98,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
+
     }
 
-    private void run() {
-        connect();
-    }
 
     private void connect(){
         String clientId = MqttClient.generateClientId();
         client =
-                new MqttAndroidClient(this.getApplicationContext(), serverUri,
+                new MqttAndroidClient(this.getApplicationContext(), SERVER_URI,
                         clientId);
 
         try {
@@ -95,15 +117,14 @@ public class MainActivity extends AppCompatActivity {
                 public void onSuccess(IMqttToken asyncActionToken) {
                     // We are connected
                     Log.d(TAG, "onSuccess");
-                    System.out.println(TAG + " Success. Connected to " + serverUri);
-                   // subscribe();
+                    System.out.println(TAG + " Success. Connected to " + SERVER_URI);
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     // Something went wrong e.g. connection timeout or firewall problems
                     Log.d(TAG, "onFailure");
-                    System.out.println(TAG + " Oh no! Failed to connect to "  + serverUri);
+                    System.out.println(TAG + " Oh no! Failed to connect to "  + SERVER_URI);
 
                 }
             });
@@ -113,11 +134,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void subscribe() {
-        final String topic = "hellocutie0";
+    private void subscribe(String topicToSubscribe) {
+        final String topic = topicToSubscribe;
         int qos = 1;
         try {
-            System.out.println("HELLO THIS IS CLIENT SUBSCRIBE: " + client);
             IMqttToken subToken = client.subscribe(topic, qos);
             subToken.setActionCallback(new IMqttActionListener() {
                 @Override
@@ -139,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void connect3(){
         final String clientId = "ExampleAndroidClient12345";
         final String subscriptionTopic = "sensor/+";
@@ -146,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         mqttConnectOptions.setAutomaticReconnect(true);
         mqttConnectOptions.setCleanSession(false);
 
-        mqttAndroidClient = new MqttAndroidClient(this.getApplicationContext(), serverUri, clientId);
+        mqttAndroidClient = new MqttAndroidClient(this.getApplicationContext(), SERVER_URI, clientId);
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean b, String s) {
@@ -186,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.w("Mqtt", "Failed to connect to: " + serverUri + exception.toString());
+                    Log.w("Mqtt", "Failed to connect to: " + SERVER_URI + exception.toString());
                 }
             });
 

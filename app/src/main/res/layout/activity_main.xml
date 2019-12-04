@@ -41,18 +41,81 @@
 
                 <TextView
                     android:id="@+id/txv_sensorTxt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="117dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="15dp"
                     android:padding="5dip"
-                    android:text="Sensor value:"
+                    android:text="RGB:"
                     android:textColor="@color/black_alpha"
                     android:textSize="18sp"
                     android:typeface="monospace" />
 
                 <TextView
-                    android:id="@+id/txv_sensorValue"
+                    android:id="@+id/txv_rgbValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:padding="5dip"
+                    android:text="Nothing yet!"
+                    android:textColor="@color/black_alpha"
+                    android:textSize="18sp"
+                    android:typeface="monospace" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dip"
+                >
+
+                <TextView
+                    android:id="@+id/txv_lightTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:padding="5dip"
+                    android:text="Lux value:"
+                    android:textColor="@color/black_alpha"
+                    android:textSize="18sp"
+                    android:typeface="monospace" />
+
+                <TextView
+                    android:id="@+id/txv_lightValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:padding="5dip"
+                    android:text="Nothing yet!"
+                    android:textColor="@color/black_alpha"
+                    android:textSize="18sp"
+                    android:typeface="monospace" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dip"
+                >
+
+                <TextView
+                    android:id="@+id/txv_proximityTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:padding="5dip"
+                    android:text="Proximity:"
+                    android:textColor="@color/black_alpha"
+                    android:textSize="18sp"
+                    android:typeface="monospace" />
+
+                <TextView
+                    android:id="@+id/txv_proximityValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="30dp"
